@@ -1,0 +1,27 @@
+# Dependencies
+/node_modules
+/ios/Pods
+/ios/build
+/android/app/build
+/android/.gradle
+/android/.idea
+
+# Build artifacts
+/dist
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.*
+!.env.example
+# Also ignore the existing .env.ts
+.env.ts
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db

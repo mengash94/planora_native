@@ -1,0 +1,50 @@
+
+buildscript {
+    ext.kotlinVersion = '1.8.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.2'
+        classpath 'com.google.gms:google-services:4.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+apply from: "variables.gradle"
+
+// Cordova shim expects this symbol; provide a no-op to avoid evaluation crash
+ext {
+    cdvPluginPostBuildExtras = {}
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { details ->
+                if (details.requested.group == 'org.jetbrains.kotlin' &&
+                        (details.requested.name == 'kotlin-stdlib'
+                                || details.requested.name == 'kotlin-stdlib-jdk7'
+                                || details.requested.name == 'kotlin-stdlib-jdk8')) {
+                    details.useVersion "$kotlinVersion"
+                }
+            }
+        }
+    }
+}
+
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

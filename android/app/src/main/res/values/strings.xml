@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PlanOra-אירועים</string>
+    <string name="title_activity_main">PlanOra-אירועים</string>
+    <string name="package_name">net.planora.app</string>
+    <string name="custom_url_scheme">net.planora.app</string>
+</resources>

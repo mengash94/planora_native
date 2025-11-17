@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "741921128539",
+    "project_id": "easypalnistaback",
+    "storage_bucket": "easypalnistaback.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741921128539:android:5e77cb8619b843bf98bf7e",
+        "android_client_info": {
+          "package_name": "net.planora.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741921128539-7ils8fbtj0uoslqr26eslp2oaeq584pu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.planora.app",
+            "certificate_hash": "15667054d2b8b8a8ceb8a6aad1c90848712f57ab"
+          }
+        },
+        {
+          "client_id": "741921128539-l67se5lifp4ddpptu03ocv99f7ngudo2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.planora.app",
+            "certificate_hash": "d963cbb4cfbb206f24dd9578a86458dfda9597c1"
+          }
+        },
+        {
+          "client_id": "741921128539-jt0kbh22310is05iss0qgg15nbakr712.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKF1kflj7PYVk9BOXkM5RO_EZGLC5fssM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741921128539-4aj6eroogf5satlscutplcs0eov9a1p7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
