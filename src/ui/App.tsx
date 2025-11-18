@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { App as CapacitorApp } from '@capacitor/app'
-// import { StatusBar, Style } from '@capacitor/status-bar'
+import { StatusBar, Style } from '@capacitor/status-bar'
 import type { PluginListenerHandle } from '@capacitor/core'
 import { StatusCard } from './StatusCard'
 import { Controls } from './Controls'
@@ -12,13 +12,13 @@ function InnerApp() {
 
     const setup = async () => {
       // ✅ רק בנייטיב, לא בדפדפן
-      // try {
-      //   await StatusBar.setOverlaysWebView({ overlay: false })
-      //   await StatusBar.setBackgroundColor({ color: '#E7BA50' }) // תחליף לצבע שלך
-      //   await StatusBar.setStyle({ style: Style.Dark }) // אייקונים כהים על רקע בהיר
-      // } catch (err) {
-      //   console.log('StatusBar error', err)
-      // }
+      try {
+        await StatusBar.setOverlaysWebView({ overlay: false })
+        await StatusBar.setBackgroundColor({ color: '#FFE0B2' }) // כתום עדין
+        await StatusBar.setStyle({ style: Style.Light }) // אייקונים כהים על רקע בהיר (Light Style = Dark Text)
+      } catch (err) {
+        console.log('StatusBar error', err)
+      }
 
       listenerHandle = await CapacitorApp.addListener('appUrlOpen', (event) => {
         console.log('App opened with URL:', event.url)

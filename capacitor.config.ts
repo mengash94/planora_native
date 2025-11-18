@@ -28,7 +28,7 @@ const config: CapacitorConfig = {
       androidSplashResourceName: 'splash', // שם קובץ התמונה באנדרואיד
       androidScaleType: 'CENTER_CROP', // אופן פריסת התמונה באנדרואיד
       showSpinner: true, // האם להציג ספינר טעינה
-      spinnerColor: '#999999', // צבע הספינר
+      spinnerColor: '#e4780cff', // צבע הספינר
     },
 
     SocialLogin: {
