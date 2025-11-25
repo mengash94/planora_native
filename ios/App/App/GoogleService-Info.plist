@@ -6,12 +6,9 @@
 	<string>741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.741921128539-vs2vnn0o29hjhietd777ocrnebe7759u</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>net.planora.app</string>
-	<key>PROJECT_ID</key>
-	<string>planora-app</string>
-	<key>GCM_SENDER_ID</key>
-	<string>741921128539</string>
 </dict>
 </plist>
-
