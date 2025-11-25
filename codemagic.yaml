@@ -9,7 +9,7 @@ workflows:
     
     environment:
       ios_signing:
-        distribution_type: app_store  # או 'development' לבדיקות
+        distribution_type: development  # לבדיקות על מכשיר אמיתי
         bundle_identifier: net.planora.app
       vars:
         NODE_VERSION: 18
@@ -63,10 +63,15 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
 
     publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true  # העלאה אוטומטית ל-TestFlight
-        # submit_to_app_store: false  # הפעל כשמוכן להעלות לחנות
+      email:
+        recipients:
+          - planora.net@gmail.com
+        notify:
+          success: true
+          failure: true
+      # app_store_connect:  # הפעל כשיש Provisioning Profile ל-app_store
+      #   auth: integration
+      #   submit_to_testflight: true
 
   # Workflow לבדיקות בסימולטור (ללא חתימה)
   ios-simulator:
