@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@capacitor/app": "^7.1.0",
-    "@capacitor/splash-screen": "^7.0.3",
     "@capacitor/status-bar": "^7.0.3",
     "@capgo/capacitor-social-login": "^7.11.3",
     "onesignal-cordova-plugin": "^5.0.0",

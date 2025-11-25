@@ -1,0 +1,19 @@
+{
+  "appId": "net.planora.app",
+  "appName": "PlanOra-אירוע זה קל!",
+  "webDir": "dist",
+  "server": {
+    "url": "https://plan-ora.net",
+    "cleartext": false,
+    "errorPath": "error.html"
+  },
+  "android": {
+    "icon": "assets/icon-source.png",
+    "splash": "assets/splash.png"
+  },
+  "ios": {
+    "icon": "assets/icon-source.png",
+    "splash": "assets/splash.png"
+  }
+}
+

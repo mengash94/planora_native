@@ -56,6 +56,18 @@
 			<key>CFBundleURLName</key>
 			<string>net.planora.app</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.741921128539-vs2vnn0o29hjhietd777ocrnebe7759u</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>

@@ -4,7 +4,7 @@ import { useSocial } from '@/providers/SocialProvider'
 export function Controls() {
   const { loginGoogle, loginApple, logout, onesignalLogin, onesignalLogout, user, onesignalReady } = useSocial()
   return (
-    <div className="row">
+    <div>
       <button onClick={loginGoogle}>Login with Google (native)</button>
       <button onClick={loginApple}>Login with Apple (native)</button>
       <button onClick={logout} disabled={!user}>Logout</button>

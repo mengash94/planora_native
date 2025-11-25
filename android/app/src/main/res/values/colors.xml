@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="brand_orange">#F09F27</color> 
-    <color name="subtle_orange">#FFE0B2</color>
+    <color name="colorPrimary">#FF6B35</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#FF6B35</color>
     
-    <color name="status_bar">@color/subtle_orange</color>
-    <color name="navigation_bar_subtle">@color/subtle_orange</color>
-    <color name="navigation_bar">@color/subtle_orange</color>
-    
-    <color name="colorPrimary">@color/brand_orange</color>
-    <color name="colorPrimaryDark">@color/brand_orange</color>
-    <color name="colorAccent">@color/brand_orange</color>
+    <!-- ☀️ Light Mode -->
+    <color name="statusBarColor">#FFFFFFFF</color>
+    <color name="navigationBarColor">#FFFFFFFF</color>
 </resources>

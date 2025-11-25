@@ -11,31 +11,19 @@ const config: CapacitorConfig = {
   },
   android: { allowMixedContent: true },
   plugins: {
-    StatusBar: {
-      overlaysWebView: false, // זה החשוב! מונע מהאתר להיכנס מתחת לבר העליון
-      backgroundColor: '#f09f27', // צבע הרקע (הכתום שלך)
-      style: 'DARK' // טקסט כהה או בהיר
-    },
-    // ✅ שלב 1: הגדרת URL Scheme
     App: {
       urlScheme: 'planora'
     },
-
-    SplashScreen: {
-      launchShowDuration: 5000, // משך זמן הצגת מסך הפתיחה (במילישניות)
-      launchAutoHide: true, // מסך הפתיחה יוסתר אוטומטית
-      backgroundColor: '#f09f27ff', // צבע רקע למסך הפתיחה
-      androidSplashResourceName: 'splash', // שם קובץ התמונה באנדרואיד
-      androidScaleType: 'CENTER_CROP', // אופן פריסת התמונה באנדרואיד
-      showSpinner: true, // האם להציג ספינר טעינה
-      spinnerColor: '#e4780cff', // צבע הספינר
+    StatusBar: {
+      style: 'light',              // ✅ אייקונים כהים
+      backgroundColor: '#FFFFFF',   // ✅ רקע לבן
+      overlay: false                // ✅ לא overlay
     },
-
     SocialLogin: {
       google: {
         webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
         androidClientId: '741921128539-7ils8fbtj0uoslqr26eslp2oaeq584pu.apps.googleusercontent.com',
-        iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com'
+        iosClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com'
         // scopes: ['profile','email']
       }
       // apple: { scopes: ['name','email'] }

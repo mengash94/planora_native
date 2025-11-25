@@ -1,0 +1,8 @@
+{
+  \"icon\": {
+    \"source\": \"assets/icon-source.png\"
+  },
+  \"splash\": {
+    \"source\": \"assets/splash.png\"
+  }
+}

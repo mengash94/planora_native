@@ -7,72 +7,27 @@
     <title>PlanOra Native</title>
 
     <style>
-      /* Safe area variables (Android/iOS) */
-      :root {
-        --safe-top: env(safe-area-inset-top);
-        /* --safe-bottom: env(safe-area-inset-bottom); */
-        --safe-left: env(safe-area-inset-left);
-        --safe-right: env(safe-area-inset-right);
+      * {
+        margin: 0;
+        padding: 16;
+        box-sizing: border-box;
       }
-      html, body { 
-  height: 100%; 
-}
 
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-  margin: 0;
-  box-sizing: border-box;
-
-  /* בשלב הזה – תוריד לגמרי את ה-padding מה-safe area */
-    /* padding-top: var(--safe-top);
-     padding-bottom: var(--safe-bottom);
-     padding-left: var(--safe-left);
-     padding-right: var(--safe-right);
-   */
-}
-
-/* ה-wrap כבר לא על 100dvh */
-.wrap {
-  min-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-      
-
-      .card {
-        padding: 24px;
-        border-radius: 16px;
-        box-shadow: 0 6px 24px #bc7218;
-        width: min(560px, 92vw);
-        background: #bc7218;
+      html, body {
+        height: 100%;
+        font-family: system-ui, -apple-system, sans-serif;
       }
+
       #root {
-  min-height: 100%;
-  box-sizing: border-box;
-  padding-bottom: 16px;
-}
-
+        min-height: 100%;
+        padding: 16px;
+      }
 
       button {
-        padding: 0;
-        border-radius: 10px;
-        border: 1px solid #bc7218;
-        background: #e97a0c84;
+        padding: 12px 16px;
+        margin: 8px 4px;
         cursor: pointer;
       }
-
-      .row { display: flex; gap: 12px; flex-wrap: wrap; }
-      .muted { color:#666; font-size: 14px; }
-      .ok { color:#087443; }
-      .bad { color:#b00020; }
-      .hidden { display: none; }
-
-      /* אם יש כותרת/ניווט קבועים באפליקציה */
-      .app-header { padding-top: var(--safe-top); }
-      .app-bottom-nav { padding-bottom: var(--safe-bottom); }
     </style>
   </head>
 
