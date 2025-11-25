@@ -2,22 +2,31 @@ import { isNative, isPluginAvailable, waitForCapacitorReady } from './env'
 import { SocialLogin, type GoogleLoginOptions, type AppleProviderOptions } from '@capgo/capacitor-social-login'
 
 let isInitialized = false
+let initError: Error | null = null
 
 async function initializeSocialLogin() {
   if (isInitialized) return
+  if (initError) throw initError
 
-  await SocialLogin.initialize({
-    google: {
-      webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
-      iOSClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com',
-      iOSServerClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
-    },
-    apple: {
-      clientId: 'net.planora.app',
-    },
-  })
-
-  isInitialized = true
+  try {
+    await SocialLogin.initialize({
+      google: {
+        webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
+        iOSClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com',
+        iOSServerClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
+        mode: 'offline', // משתמש ב-offline mode לקבלת refresh token
+      },
+      apple: {
+        clientId: 'net.planora.app',
+      },
+    })
+    isInitialized = true
+    console.log('[SocialLogin] Initialized successfully')
+  } catch (error) {
+    console.error('[SocialLogin] Initialize error:', error)
+    initError = error as Error
+    throw error
+  }
 }
 
 async function getSocial() {
