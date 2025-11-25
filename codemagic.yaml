@@ -36,8 +36,8 @@ workflows:
           xcodebuild \
             -workspace "$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
-            -sdk iphoneos \
-            -configuration Release \
+            -sdk iphonesimulator \
+            -configuration Debug \
             archive \
             -archivePath $PWD/App.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
