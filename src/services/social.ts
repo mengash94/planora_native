@@ -1,10 +1,33 @@
 import { isNative, isPluginAvailable, waitForCapacitorReady } from './env'
 import { SocialLogin, type GoogleLoginOptions, type AppleProviderOptions } from '@capgo/capacitor-social-login'
 
+let isInitialized = false
+
+async function initializeSocialLogin() {
+  if (isInitialized) return
+
+  await SocialLogin.initialize({
+    google: {
+      webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
+      iOSClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com',
+      iOSServerClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
+    },
+    apple: {
+      clientId: 'net.planora.app',
+    },
+  })
+
+  isInitialized = true
+}
+
 async function getSocial() {
   await waitForCapacitorReady()
   if (!isNative()) throw new Error('Not native')
   if (!isPluginAvailable('SocialLogin')) throw new Error('SocialLogin plugin not available')
+  
+  // אתחול הפלאגין לפני השימוש
+  await initializeSocialLogin()
+  
   return SocialLogin
 }
 
