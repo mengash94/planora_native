@@ -60,7 +60,6 @@ workflows:
           cd ios/App
           LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID" || echo "0")
           agvtool new-version -all $((LATEST_BUILD + 1))
-
       - name: Build iOS app
         script: |
           cd ios/App
@@ -71,7 +70,11 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/App.xcarchive \
+            DEVELOPMENT_TEAM=462DHLZ9T8 \
             archive
+
+
+
 
       - name: Export IPA
         script: |
