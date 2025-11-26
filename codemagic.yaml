@@ -35,31 +35,25 @@ workflows:
 
       - name: Set up code signing
         script: |
-          echo "=== Listing available certificates ==="
-          app-store-connect certificates list || true
+          echo "=== Creating Distribution Certificate ==="
+          app-store-connect certificates create \
+            --type IOS_DISTRIBUTION \
+            --save || echo "Certificate might already exist"
           
-          echo "=== Listing available bundle IDs ==="
-          app-store-connect bundle-ids list || true
+          echo "=== Listing certificates ==="
+          app-store-connect certificates list
           
-          echo "=== Listing available profiles ==="
-          app-store-connect profiles list || true
-          
-          echo "=== Creating signing files ==="
+          echo "=== Creating App Store profile ==="
           app-store-connect fetch-signing-files net.planora.app \
             --type IOS_APP_STORE \
             --create \
-            --verbose || echo "Failed to create app store profile, trying development..."
-          
-          app-store-connect fetch-signing-files net.planora.app \
-            --type IOS_APP_DEVELOPMENT \
-            --create \
-            --verbose || echo "Failed to create development profile"
+            --verbose
           
           echo "=== Using profiles ==="
-          xcode-project use-profiles --verbose || true
+          xcode-project use-profiles
           
-          echo "=== Keychain profiles ==="
-          security find-identity -v -p codesigning || true
+          echo "=== Available signing identities ==="
+          security find-identity -v -p codesigning
 
       - name: Increment build number
         script: |
@@ -96,44 +90,21 @@ workflows:
 
       - name: Export IPA
         script: |
-          cd ios/App
-          xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/App.xcarchive \
-            -exportPath $CM_BUILD_DIR/ipa \
-            -exportOptionsPlist ExportOptions.plist || {
-              echo "Creating ExportOptions.plist..."
-              cat > ExportOptions.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>ad-hoc</string>
-              <key>teamID</key>
-              <string>462DHLZ9T8</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>stripSwiftSymbols</key>
-              <true/>
-              <key>compileBitcode</key>
-              <false/>
-          </dict>
-          </plist>
-          EOF
-              xcodebuild -exportArchive \
-                -archivePath $CM_BUILD_DIR/App.xcarchive \
-                -exportPath $CM_BUILD_DIR/ipa \
-                -exportOptionsPlist ExportOptions.plist
+          xcode-project build-ipa \
+            --archive $CM_BUILD_DIR/App.xcarchive \
+            --export-options-plist ~/export_options.plist || {
+              echo "=== Signed export failed, creating unsigned IPA ==="
+              cd $CM_BUILD_DIR
+              mkdir -p Payload
+              cp -r App.xcarchive/Products/Applications/*.app Payload/
+              zip -r PlanOra-unsigned.ipa Payload
             }
           
-          # העתק את ה-IPA למיקום הסופי
-          mkdir -p $CM_BUILD_DIR/output
-          cp $CM_BUILD_DIR/ipa/*.ipa $CM_BUILD_DIR/output/ || true
-          ls -la $CM_BUILD_DIR/
+          echo "=== IPA files ==="
+          find $CM_BUILD_DIR -name "*.ipa" -ls
 
     artifacts:
-      - $CM_BUILD_DIR/ipa/*.ipa
-      - $CM_BUILD_DIR/output/*.ipa
+      - $CM_BUILD_DIR/*.ipa
       - $CM_BUILD_DIR/App.xcarchive
 
     publishing:
