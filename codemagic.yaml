@@ -37,7 +37,13 @@ workflows:
           pod install
 
       - name: Set up code signing
-        script: xcode-project use-profiles
+        script: |
+          # יצירת Certificate ו-Profile אוטומטית אם לא קיימים
+          app-store-connect fetch-signing-files net.planora.app \
+            --type IOS_APP_STORE \
+            --create
+          # שימוש ב-Profiles
+          xcode-project use-profiles
 
       - name: Increment build number
         script: |
