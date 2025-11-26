@@ -1,14 +1,13 @@
 workflows:
-  # ========== TestFlight Build ==========
   ios-testflight:
     name: iOS TestFlight Build
     max_build_duration: 90
     instance_type: mac_mini_m2
 
-    integrations:
-      app_store_connect: comemgic_admin
-
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: net.planora.app
       vars:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
@@ -35,22 +34,22 @@ workflows:
 
       - name: Set up code signing
         script: |
-          echo "=== Fetching App Store signing files ==="
-          app-store-connect fetch-signing-files "net.planora.app" \
-            --type IOS_APP_STORE \
-            --create \
-            --verbose
-
-          echo "=== Applying signing files to Xcode project ==="
-          xcode-project use-profiles
-
+          echo "=== Setting up keychain ==="
+          keychain initialize
+          
           echo "=== Available signing identities ==="
           security find-identity -v -p codesigning
+          
+          echo "=== Installed provisioning profiles ==="
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "No profiles dir"
+          
+          echo "=== Applying profiles to Xcode project ==="
+          xcode-project use-profiles
 
       - name: Increment build number
         script: |
           cd ios/App
-          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID" || echo "0")
+          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID" 2>/dev/null || echo "0")
           agvtool new-version -all $((LATEST_BUILD + 1))
 
       - name: Build signed IPA
@@ -78,7 +77,6 @@ workflows:
         auth: integration
         submit_to_testflight: true
 
-  # ========== Unsigned Build (לבדיקות) ==========
   ios-unsigned:
     name: iOS Unsigned Build (Capacitor)
     max_build_duration: 60
