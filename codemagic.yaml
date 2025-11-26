@@ -9,9 +9,6 @@ workflows:
       app_store_connect: Codemagic
     
     environment:
-      ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: net.planora.app
       vars:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
@@ -38,12 +35,31 @@ workflows:
 
       - name: Set up code signing
         script: |
-          # יצירת Certificate ו-Profile אוטומטית אם לא קיימים
+          echo "=== Listing available certificates ==="
+          app-store-connect certificates list || true
+          
+          echo "=== Listing available bundle IDs ==="
+          app-store-connect bundle-ids list || true
+          
+          echo "=== Listing available profiles ==="
+          app-store-connect profiles list || true
+          
+          echo "=== Creating signing files ==="
           app-store-connect fetch-signing-files net.planora.app \
-            --type IOS_APP_ADHOC \
-            --create
-          # שימוש ב-Profiles
-          xcode-project use-profiles
+            --type IOS_APP_STORE \
+            --create \
+            --verbose || echo "Failed to create app store profile, trying development..."
+          
+          app-store-connect fetch-signing-files net.planora.app \
+            --type IOS_APP_DEVELOPMENT \
+            --create \
+            --verbose || echo "Failed to create development profile"
+          
+          echo "=== Using profiles ==="
+          xcode-project use-profiles --verbose || true
+          
+          echo "=== Keychain profiles ==="
+          security find-identity -v -p codesigning || true
 
       - name: Increment build number
         script: |
