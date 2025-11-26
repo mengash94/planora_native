@@ -49,6 +49,12 @@ workflows:
             --create \
             --verbose
 
+          echo "=== Creating / fetching Development provisioning profile ==="
+          app-store-connect fetch-signing-files net.planora.app \
+            --type IOS_APP_DEVELOPMENT \
+            --create \
+            --verbose
+
           echo "=== Applying signing files to Xcode project ==="
           xcode-project use-profiles
 
@@ -60,6 +66,7 @@ workflows:
           cd ios/App
           LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID" || echo "0")
           agvtool new-version -all $((LATEST_BUILD + 1))
+
       - name: Build iOS app
         script: |
           cd ios/App
@@ -72,9 +79,6 @@ workflows:
             -archivePath $CM_BUILD_DIR/App.xcarchive \
             DEVELOPMENT_TEAM=462DHLZ9T8 \
             archive
-
-
-
 
       - name: Export IPA
         script: |
