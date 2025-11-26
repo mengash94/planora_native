@@ -96,14 +96,45 @@ workflows:
 
       - name: Export IPA
         script: |
-          xcode-project build-ipa \
-            --workspace "ios/App/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME" \
-            --archive $CM_BUILD_DIR/App.xcarchive
+          cd ios/App
+          xcodebuild -exportArchive \
+            -archivePath $CM_BUILD_DIR/App.xcarchive \
+            -exportPath $CM_BUILD_DIR/ipa \
+            -exportOptionsPlist ExportOptions.plist || {
+              echo "Creating ExportOptions.plist..."
+              cat > ExportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>ad-hoc</string>
+              <key>teamID</key>
+              <string>462DHLZ9T8</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+          </dict>
+          </plist>
+          EOF
+              xcodebuild -exportArchive \
+                -archivePath $CM_BUILD_DIR/App.xcarchive \
+                -exportPath $CM_BUILD_DIR/ipa \
+                -exportOptionsPlist ExportOptions.plist
+            }
+          
+          # העתק את ה-IPA למיקום הסופי
+          mkdir -p $CM_BUILD_DIR/output
+          cp $CM_BUILD_DIR/ipa/*.ipa $CM_BUILD_DIR/output/ || true
+          ls -la $CM_BUILD_DIR/
 
     artifacts:
-      - build/ios/ipa/*.ipa
-      - $CM_BUILD_DIR/*.ipa
+      - $CM_BUILD_DIR/ipa/*.ipa
+      - $CM_BUILD_DIR/output/*.ipa
+      - $CM_BUILD_DIR/App.xcarchive
 
     publishing:
       email:
