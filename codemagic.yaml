@@ -11,8 +11,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: net.planora.app
-        certificate: planora.sign1
-        profile: planora_app_store_profile1
       vars:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
