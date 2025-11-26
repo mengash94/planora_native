@@ -4,10 +4,15 @@ workflows:
     max_build_duration: 90
     instance_type: mac_mini_m2
 
+    integrations:
+      app_store_connect: comemgic_admin
+
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: net.planora.app
+        certificate: planora.sign1
+        profile: planora_app_store_profile1
       vars:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
@@ -34,8 +39,11 @@ workflows:
 
       - name: Set up code signing
         script: |
-          echo "=== Setting up keychain ==="
+          echo "=== Initializing keychain ==="
           keychain initialize
+          
+          echo "=== Adding certificates to keychain ==="
+          keychain add-certificates
           
           echo "=== Available signing identities ==="
           security find-identity -v -p codesigning
