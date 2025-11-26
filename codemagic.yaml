@@ -76,6 +76,9 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/App.xcarchive \
+            -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="462DHLZ9T8" \
+            CODE_SIGN_STYLE="Automatic" \
             archive
 
       - name: Export IPA
