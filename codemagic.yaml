@@ -35,23 +35,9 @@ workflows:
 
       - name: Set up code signing
         script: |
-          echo "=== Creating Distribution Certificate (if needed) ==="
-          app-store-connect certificates create \
-            --type IOS_DISTRIBUTION \
-            --save || echo "Certificate might already exist"
-
-          echo "=== Listing certificates ==="
-          app-store-connect certificates list
-
-          echo "=== Creating / fetching App Store provisioning profile ==="
-          app-store-connect fetch-signing-files net.planora.app \
+          echo "=== Fetching App Store signing files ==="
+          app-store-connect fetch-signing-files "net.planora.app" \
             --type IOS_APP_STORE \
-            --create \
-            --verbose
-
-          echo "=== Creating / fetching Development provisioning profile ==="
-          app-store-connect fetch-signing-files net.planora.app \
-            --type IOS_APP_DEVELOPMENT \
             --create \
             --verbose
 
@@ -67,32 +53,19 @@ workflows:
           LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID" || echo "0")
           agvtool new-version -all $((LATEST_BUILD + 1))
 
-      - name: Build iOS app
+      - name: Build signed IPA
         script: |
-          cd ios/App
-          echo "=== Archiving iOS app with signing profiles from xcode-project use-profiles ==="
-          xcodebuild \
-            -workspace "$XCODE_WORKSPACE" \
-            -scheme "$XCODE_SCHEME" \
-            -sdk iphoneos \
-            -configuration Release \
-            -archivePath $CM_BUILD_DIR/App.xcarchive \
-            DEVELOPMENT_TEAM=462DHLZ9T8 \
-            archive
-
-      - name: Export IPA
-        script: |
-          echo "=== Building signed IPA for App Store (TestFlight) ==="
+          echo "=== Building signed IPA ==="
           xcode-project build-ipa \
-            --archive $CM_BUILD_DIR/App.xcarchive \
-            --export-method app-store
+            --workspace "ios/App/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
 
           echo "=== IPA files ==="
-          find $CM_BUILD_DIR -name "*.ipa" -ls
+          find . -name "*.ipa" -ls
 
     artifacts:
-      - $CM_BUILD_DIR/*.ipa
-      - $CM_BUILD_DIR/App.xcarchive
+      - build/ios/ipa/*.ipa
+      - build/ios/xcarchive/*.xcarchive
 
     publishing:
       email:
@@ -125,12 +98,10 @@ workflows:
           npm ci || npm install
 
       - name: Build web app
-        script: |
-          npm run build
+        script: npm run build
 
       - name: Sync Capacitor platforms
-        script: |
-          npm run cap:sync
+        script: npm run cap:sync
 
       - name: Install CocoaPods
         script: |
