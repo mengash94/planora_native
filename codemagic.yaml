@@ -1,4 +1,80 @@
 workflows:
+  # ========== TestFlight Build ==========
+  ios-testflight:
+    name: iOS TestFlight Build
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    
+    integrations:
+      app_store_connect: Codemagic
+    
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: net.planora.app
+      vars:
+        NODE_VERSION: 18
+        XCODE_WORKSPACE: "App.xcworkspace"
+        XCODE_SCHEME: "App"
+      xcode: latest
+
+    scripts:
+      - name: Set up Node and install dependencies
+        script: |
+          nvm install $NODE_VERSION || echo "nvm already installed"
+          nvm use $NODE_VERSION || echo "using default node"
+          npm ci || npm install
+
+      - name: Build web app
+        script: npm run build
+
+      - name: Sync Capacitor platforms
+        script: npm run cap:sync
+
+      - name: Install CocoaPods
+        script: |
+          cd ios/App
+          pod install
+
+      - name: Set up code signing
+        script: xcode-project use-profiles
+
+      - name: Increment build number
+        script: |
+          cd ios/App
+          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APP_ID" || echo "0")
+          agvtool new-version -all $((LATEST_BUILD + 1))
+
+      - name: Build iOS app
+        script: |
+          cd ios/App
+          xcodebuild \
+            -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath $CM_BUILD_DIR/App.xcarchive \
+            archive
+
+      - name: Export IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "ios/App/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --archive $CM_BUILD_DIR/App.xcarchive
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $CM_BUILD_DIR/*.ipa
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - External Testers
+
+  # ========== Unsigned Build (לבדיקות) ==========
   ios-unsigned:
     name: iOS Unsigned Build (Capacitor)
     max_build_duration: 60
