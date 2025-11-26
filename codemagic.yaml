@@ -76,10 +76,23 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/App.xcarchive \
-            -allowProvisioningUpdates \
             DEVELOPMENT_TEAM="462DHLZ9T8" \
-            CODE_SIGN_STYLE="Automatic" \
-            archive
+            CODE_SIGN_STYLE="Manual" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            archive || {
+              echo "=== Trying without code signing ==="
+              xcodebuild \
+                -workspace "$XCODE_WORKSPACE" \
+                -scheme "$XCODE_SCHEME" \
+                -sdk iphoneos \
+                -configuration Release \
+                -archivePath $CM_BUILD_DIR/App.xcarchive \
+                CODE_SIGNING_ALLOWED=NO \
+                CODE_SIGNING_REQUIRED=NO \
+                CODE_SIGN_IDENTITY="" \
+                archive
+            }
 
       - name: Export IPA
         script: |
