@@ -54,12 +54,22 @@ export function SocialProvider({ children }: { children: React.ReactNode }) {
 
   const loginApple = async () => {
     const res = await loginWithApple()
-    const u = {
-      id: (res as any)?.result?.user?.id || 'user',
-      email: (res as any)?.result?.user?.email,
+    // אם יש Firebase User, נשתמש בו
+    const firebaseUser = (res as any)?.firebaseUser
+    if (firebaseUser) {
+      const u = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || undefined,
+      }
+      setUser(u)
+    } else {
+      // Fallback למקרה שלא native
+      const u = {
+        id: (res as any)?.result?.user?.id || 'user',
+        email: (res as any)?.result?.user?.email,
+      }
+      setUser(u)
     }
-    // TODO: שלח ל-InstaBack לקבלת user אמיתי
-    setUser(u)
   }
 
   const logout = async () => {

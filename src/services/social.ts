@@ -1,5 +1,6 @@
 import { isNative, isPluginAvailable, waitForCapacitorReady } from './env'
 import { SocialLogin, type GoogleLoginOptions, type AppleProviderOptions } from '@capgo/capacitor-social-login'
+import { initFirebase, signInWithAppleIdToken, getCurrentUser, type User as FirebaseUser } from './firebase'
 
 let isInitialized = false
 let initError: Error | null = null
@@ -9,6 +10,11 @@ async function initializeSocialLogin() {
   if (initError) throw initError
 
   try {
+    // אתחול Firebase
+    if (isNative()) {
+      initFirebase()
+    }
+    
     await SocialLogin.initialize({
       google: {
         webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
@@ -50,14 +56,47 @@ export async function loginWithGoogle() {
   return res
 }
 
+/**
+ * Sign in with Apple using Firebase Auth
+ * זה עובד כך:
+ * 1. מקבלים idToken מ-Sign in with Apple דרך @capgo/capacitor-social-login
+ * 2. משתמשים ב-idToken הזה כדי להתחבר ל-Firebase Auth
+ * 3. Firebase מאמת את ה-token מול Apple ומחזיר Firebase User
+ */
 export async function loginWithApple() {
   const social = await getSocial()
-  // אם אינך עובד עם iOS עכשיו, אפשר להשאיר ריק
   const options: AppleProviderOptions = {} as AppleProviderOptions
   const res = await social.login({ provider: 'apple', options })
+  
   const idToken = (res as any)?.result?.idToken
-  const accessToken = (res as any)?.result?.accessToken
-  if (!idToken && !accessToken) throw new Error('No Apple token')
+  if (!idToken) {
+    throw new Error('No Apple ID token received')
+  }
+  
+  // אם אנחנו ב-native (iOS), נשתמש ב-Firebase Auth
+  if (isNative()) {
+    try {
+      const firebaseUser = await signInWithAppleIdToken(idToken)
+      console.log('[SocialLogin] Firebase Auth successful:', firebaseUser.uid)
+      
+      // מחזירים את המידע מ-Firebase User
+      return {
+        ...res,
+        firebaseUser: {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+        },
+        // שמירה על idToken המקורי גם כן
+        idToken: idToken,
+      }
+    } catch (firebaseError) {
+      console.error('[SocialLogin] Firebase Auth error:', firebaseError)
+      throw new Error(`Firebase authentication failed: ${firebaseError}`)
+    }
+  }
+  
+  // אם לא native, נחזיר את התוצאה המקורית
   return res
 }
 
