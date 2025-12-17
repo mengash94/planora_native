@@ -24,9 +24,11 @@ const config: CapacitorConfig = {
         webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
         androidClientId: '741921128539-7ils8fbtj0uoslqr26eslp2oaeq584pu.apps.googleusercontent.com',
         iosClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com'
-        // scopes: ['profile','email']
+      },
+      apple: {
+        clientId: 'net.planora.app',
+        scopes: ['name', 'email']
       }
-      // apple: { scopes: ['name','email'] }
     },
 
     OneSignal: { appId: '7f593882-9d51-45bc-b3ca-e17ee2d54a0d' }

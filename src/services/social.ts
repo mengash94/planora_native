@@ -20,7 +20,7 @@ async function initializeSocialLogin() {
         webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
         iOSClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com',
         iOSServerClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
-        mode: 'offline', // משתמש ב-offline mode לקבלת refresh token
+        mode: 'offline',
       },
       apple: {
         clientId: 'net.planora.app',
@@ -64,12 +64,29 @@ export async function loginWithGoogle() {
  * 3. Firebase מאמת את ה-token מול Apple ומחזיר Firebase User
  */
 export async function loginWithApple() {
+  console.log('[Apple] Starting Sign in with Apple...')
   const social = await getSocial()
-  const options: AppleProviderOptions = {} as AppleProviderOptions
-  const res = await social.login({ provider: 'apple', options })
+  
+  const options: AppleProviderOptions = {
+    scopes: ['name', 'email'],
+  } as AppleProviderOptions
+  
+  console.log('[Apple] Calling social.login with provider: apple')
+  
+  let res
+  try {
+    res = await social.login({ provider: 'apple', options })
+    console.log('[Apple] Login response:', JSON.stringify(res, null, 2))
+  } catch (loginError) {
+    console.error('[Apple] Login error:', loginError)
+    throw new Error(`Apple Sign In failed: ${loginError}`)
+  }
   
   const idToken = (res as any)?.result?.idToken
+  console.log('[Apple] ID Token received:', idToken ? 'Yes' : 'No')
+  
   if (!idToken) {
+    console.error('[Apple] No idToken in response:', res)
     throw new Error('No Apple ID token received')
   }
   
