@@ -20,7 +20,7 @@ async function initializeSocialLogin() {
         webClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
         iOSClientId: '741921128539-vs2vnn0o29hjhietd777ocrnebe7759u.apps.googleusercontent.com',
         iOSServerClientId: '741921128539-rmvupu979hlop84t4iucbbauhbcvqunl.apps.googleusercontent.com',
-        mode: 'offline',
+        mode: 'offline', // משתמש ב-offline mode לקבלת refresh token
       },
       apple: {
         clientId: 'net.planora.app',
@@ -64,57 +64,74 @@ export async function loginWithGoogle() {
  * 3. Firebase מאמת את ה-token מול Apple ומחזיר Firebase User
  */
 export async function loginWithApple() {
-  console.log('[Apple] Starting Sign in with Apple...')
-  const social = await getSocial()
-  
-  const options: AppleProviderOptions = {
-    scopes: ['name', 'email'],
-  } as AppleProviderOptions
-  
-  console.log('[Apple] Calling social.login with provider: apple')
-  
-  let res
-  try {
-    res = await social.login({ provider: 'apple', options })
-    console.log('[Apple] Login response:', JSON.stringify(res, null, 2))
-  } catch (loginError) {
-    console.error('[Apple] Login error:', loginError)
-    throw new Error(`Apple Sign In failed: ${loginError}`)
-  }
-  
-  const idToken = (res as any)?.result?.idToken
-  console.log('[Apple] ID Token received:', idToken ? 'Yes' : 'No')
-  
-  if (!idToken) {
-    console.error('[Apple] No idToken in response:', res)
-    throw new Error('No Apple ID token received')
-  }
-  
-  // אם אנחנו ב-native (iOS), נשתמש ב-Firebase Auth
-  if (isNative()) {
+  // Debug helper function
+  const debugAlert = (title: string, data: any) => {
     try {
-      const firebaseUser = await signInWithAppleIdToken(idToken)
-      console.log('[SocialLogin] Firebase Auth successful:', firebaseUser.uid)
-      
-      // מחזירים את המידע מ-Firebase User
-      return {
-        ...res,
-        firebaseUser: {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-        },
-        // שמירה על idToken המקורי גם כן
-        idToken: idToken,
-      }
-    } catch (firebaseError) {
-      console.error('[SocialLogin] Firebase Auth error:', firebaseError)
-      throw new Error(`Firebase authentication failed: ${firebaseError}`)
+      const msg = typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data)
+      alert(`🍎 ${title}\n\n${msg}`)
+      console.log(`[Apple Debug] ${title}:`, data)
+    } catch (e) {
+      alert(`🍎 ${title}: [Could not stringify]`)
     }
   }
-  
-  // אם לא native, נחזיר את התוצאה המקורית
-  return res
+
+  try {
+    debugAlert('Step 1', 'Getting social plugin...')
+    const social = await getSocial()
+    
+    debugAlert('Step 2', 'Plugin ready, calling login...')
+    
+    const options: AppleProviderOptions = {
+      scopes: ['email', 'name']
+    } as AppleProviderOptions
+    
+    // Wrap with timeout to detect hanging
+    const loginPromise = social.login({ provider: 'apple', options })
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Apple login timeout after 60s')), 60000)
+    )
+    
+    debugAlert('Step 3', 'Waiting for Apple response...')
+    
+    const res = await Promise.race([loginPromise, timeoutPromise]) as any
+    
+    debugAlert('Step 4 - Response', res)
+    
+    // Try different response structures
+    const idToken = res?.result?.idToken || res?.idToken || res?.result?.identityToken
+    const user = res?.result?.user || res?.result?.userIdentifier || res?.user
+    const email = res?.result?.email || res?.email
+    const givenName = res?.result?.givenName || res?.givenName
+    const familyName = res?.result?.familyName || res?.familyName
+    
+    debugAlert('Step 5 - Extracted', { idToken: idToken ? 'YES' : 'NO', user, email, givenName, familyName })
+    
+    if (!idToken && !user) {
+      throw new Error('No Apple ID token or user received')
+    }
+    
+    // Return raw Apple data without Firebase
+    return {
+      result: {
+        idToken,
+        user,
+        email,
+        givenName,
+        familyName,
+      },
+      raw: res
+    }
+    
+  } catch (error: any) {
+    const errorDetails = {
+      message: error?.message,
+      code: error?.code,
+      name: error?.name,
+      stack: error?.stack?.substring(0, 200),
+    }
+    debugAlert('ERROR', errorDetails)
+    throw error
+  }
 }
 
 export async function socialLogout(provider: 'google' | 'apple') {
