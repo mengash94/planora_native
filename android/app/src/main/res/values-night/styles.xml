@@ -21,6 +21,6 @@
     </style>
 
     <style name="AppTheme.NoActionBarLaunch" parent="AppTheme">
-        <item name="android:background">#000000</item>
+        <item name="android:background">#FFFFFF</item>
     </style>
 </resources>

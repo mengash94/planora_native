@@ -18,8 +18,22 @@
     </style>
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
-        <item name="android:windowBackground">@drawable/splash</item>
+        <!-- רקע כתום -->
+        <item name="windowSplashScreenBackground">#F59E0B</item>
+        
+        <!-- שימוש ב-adaptive icon (ic_launcher) - זה יראה את הלוגו -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        
+        <!-- רקע כתום לאייקון -->
+        <item name="windowSplashScreenIconBackgroundColor">#F59E0B</item>
+        
+        <!-- משך זמן האנימציה (אופציונלי) -->
+        <item name="windowSplashScreenAnimationDuration">300</item>
+        
+        <!-- Theme אחרי ה-Splash -->
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+        
+        <!-- צבעי status bar -->
         <item name="android:statusBarColor">@color/statusBarColor</item>
         <item name="android:navigationBarColor">@color/navigationBarColor</item>
         <item name="android:windowLightStatusBar">true</item>

@@ -1,21 +1,74 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <!-- הרשאה לאנדרואיד 13+ כדי שיופיע prompt של התראות -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- אינטרנט -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- הרשאה לקריאת אנשי קשר -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- Android 11+ (API 30+) - הצהרה על אפליקציות שרוצים לפתוח -->
+    <queries>
+        <!-- WhatsApp -->
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+
+        <!-- Telegram -->
+        <package android:name="org.telegram.messenger" />
+
+        <!-- דפדפנים - לפתיחת קישורים -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+
+        <!-- שיתוף טקסט -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
+        </intent>
+
+        <!-- SMS -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="sms" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="smsto" />
+        </intent>
+
+        <!-- אימייל -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+
+        <!-- טלפון -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
-        android:icon="@mipmap/planoralogo512"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/planoralogo512"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <!-- Privacy Policy URL -->
+        <meta-data
+            android:name="privacy_policy_url"
+            android:value="https://plan-ora.net/privacy" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -23,7 +76,6 @@
             android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
             android:theme="@style/AppTheme.NoActionBarLaunch">
-
             <!-- Activity launcher רגילה -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,9 +87,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="register.plan-ora.net" />
+                <data android:scheme="https" android:host="register.plan-ora.net" />
             </intent-filter>
 
             <!-- Custom Scheme: planora:// -->
@@ -47,7 +97,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="planora" />
             </intent-filter>
-
         </activity>
 
         <provider
@@ -55,11 +104,7 @@
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
-
     </application>
-
 </manifest>
