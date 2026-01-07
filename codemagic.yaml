@@ -76,14 +76,15 @@ workflows:
             archive \
             CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM=462DHLZ9T8 \
+            PROVISIONING_PROFILE_SPECIFIER="plaoracodemagic" \
             ENABLE_USER_SCRIPT_SANDBOX=NO \
             SWIFT_VERSION=5.0
             
           echo "=== Exporting IPA ==="
-          # כאן אנחנו נותנים ל-Codemagic לייצר את ה-export options הנכון עבורנו
+          # תיקון תחביר סופי: שימוש ב- -- במקום -
           xcode-project build-ipa \
-            -archivePath $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
-            -exportPath $CM_BUILD_DIR/build/ios/ipa
+            --archive-path $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
+            --export-path $CM_BUILD_DIR/build/ios/ipa
           
           echo "=== IPA files ==="
           find $CM_BUILD_DIR -name "*.ipa" -ls
