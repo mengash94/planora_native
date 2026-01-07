@@ -51,6 +51,11 @@ post_install do |installer|
       # Fix for Xcode 15+ compatibility
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
+      # Disable experimental features that might cause issues in Xcode 26.1
+      swift_flags = config.build_settings['OTHER_SWIFT_FLAGS'] || '$(inherited)'
+      swift_flags += ' -Xfrontend -disable-experimental-feature'
+      swift_flags += ' -Xfrontend -disable-experimental-feature=DebugDescriptionMacro'
+      config.build_settings['OTHER_SWIFT_FLAGS'] = swift_flags
     end
   end
 end
