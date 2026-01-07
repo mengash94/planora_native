@@ -41,16 +41,16 @@ workflows:
           echo "=== Initializing keychain ==="
           keychain initialize
           
-          echo "=== Fetching profile: plaoracodemagic ==="
-          # משיכת הפרופיל הספציפי מהפורטל של אפל
-          app-store-connect fetch-signing-files "net.planora.app" \
-            --type IOS_APP_STORE \
-            --install
+          echo "=== Fetching profiles from Apple ==="
+          # שים לב: בלי --install ובלי שם הפרופיל כארגומנט חופשי
+          app-store-connect fetch-signing-files --bundle-id "net.planora.app" --type IOS_APP_STORE
           
+          echo "=== Adding certificates to keychain ==="
           keychain add-certificates
           
-          echo "=== Applying profile to Xcode project ==="
-          xcode-project use-profiles --bundle-id "net.planora.app"
+          echo "=== Applying profiles to Xcode project ==="
+          # שים לב: בלי --bundle-id
+          xcode-project use-profiles
 
       - name: Increment build number
         script: |
@@ -66,7 +66,7 @@ workflows:
       - name: Build signed IPA
         script: |
           cd ios/App
-          echo "=== Archiving App with exact profile ==="
+          echo "=== Archiving App ==="
           xcodebuild \
             -workspace "$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
@@ -76,11 +76,11 @@ workflows:
             archive \
             CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM=462DHLZ9T8 \
-            PROVISIONING_PROFILE_SPECIFIER="plaoracodemagic" \
             ENABLE_USER_SCRIPT_SANDBOX=NO \
             SWIFT_VERSION=5.0
             
           echo "=== Exporting IPA ==="
+          # כאן אנחנו נותנים ל-Codemagic לייצר את ה-export options הנכון עבורנו
           xcode-project build-ipa \
             -archivePath $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
             -exportPath $CM_BUILD_DIR/build/ios/ipa
