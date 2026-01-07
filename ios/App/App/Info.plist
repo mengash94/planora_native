@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>PlanOra</string>
+	<string>PlanOra</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -47,6 +47,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>PlanOra uses your location to suggest nearby venues and event-related services.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>PlanOra משתמשת באנשי הקשר שלך כדי להקל על הזמנת חברים לאירועים.</string>
 	<!-- ✅ שלב 3.1: הגדרות Deep Link עבור iOS -->
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -73,8 +75,12 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:www.plan-ora.net</string>
+		<string>applinks:register.plan-ora.net</string>
 	</array>
 	<!-- סוף הגדרות Deep Link -->
+
+	<!-- Privacy Policy URL -->
+	<key>NSPrivacyPolicyURL</key>
+	<string>https://plan-ora.net/privacy</string>
 </dict>
 </plist>

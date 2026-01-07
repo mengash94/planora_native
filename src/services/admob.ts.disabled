@@ -1,0 +1,221 @@
+import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, BannerAdPluginEvents, InterstitialAdPluginEvents, RewardAdPluginEvents, AdOptions, RewardAdOptions, AdLoadInfo, AdMobRewardItem } from '@capacitor-community/admob';
+
+// ==========================================
+// ⚠️ החלף את ה-Ad Unit IDs באלה שלך מ-AdMob!
+// ==========================================
+
+// IDs לבדיקות (Google Test IDs) - עובדים תמיד
+const TEST_IDS = {
+  banner: 'ca-app-pub-3940256099942544/6300978111',
+  interstitial: 'ca-app-pub-3940256099942544/1033173712',
+  rewarded: 'ca-app-pub-3940256099942544/5224354917',
+};
+
+// IDs אמיתיים שלך - החלף אותם!
+const PRODUCTION_IDS = {
+  banner: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',        // באנר
+  interstitial: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY', // מסך מלא
+  rewarded: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',     // פרסומת עם פרס
+};
+
+// שנה ל-false כשעוברים לפרודקשן!
+const USE_TEST_ADS = true;
+
+const AD_UNIT_IDS = USE_TEST_ADS ? TEST_IDS : PRODUCTION_IDS;
+
+/**
+ * אתחול AdMob - קרא פעם אחת באתחול האפליקציה
+ */
+export async function initAdMob(): Promise<void> {
+  try {
+    await AdMob.initialize({
+      testingDevices: USE_TEST_ADS ? [] : [],
+      initializeForTesting: USE_TEST_ADS,
+    });
+    console.log('[AdMob] Initialized successfully');
+  } catch (e) {
+    console.error('[AdMob] Init error:', e);
+  }
+}
+
+// ==========================================
+// 📢 באנר - פרסומת קטנה בתחתית/עליון המסך
+// ==========================================
+
+/**
+ * הצגת באנר פרסומת
+ * @param position מיקום הבאנר (TOP או BOTTOM)
+ */
+export async function showBanner(position: 'TOP' | 'BOTTOM' = 'BOTTOM'): Promise<void> {
+  try {
+    const options: BannerAdOptions = {
+      adId: AD_UNIT_IDS.banner,
+      adSize: BannerAdSize.ADAPTIVE_BANNER,
+      position: position === 'TOP' ? BannerAdPosition.TOP_CENTER : BannerAdPosition.BOTTOM_CENTER,
+      margin: 0,
+      isTesting: USE_TEST_ADS,
+    };
+    await AdMob.showBanner(options);
+    console.log('[AdMob] Banner shown');
+  } catch (e) {
+    console.error('[AdMob] Show banner error:', e);
+  }
+}
+
+/**
+ * הסתרת באנר
+ */
+export async function hideBanner(): Promise<void> {
+  try {
+    await AdMob.hideBanner();
+  } catch (e) {
+    console.warn('[AdMob] Hide banner error:', e);
+  }
+}
+
+/**
+ * הסרת באנר (לחלוטין)
+ */
+export async function removeBanner(): Promise<void> {
+  try {
+    await AdMob.removeBanner();
+  } catch (e) {
+    console.warn('[AdMob] Remove banner error:', e);
+  }
+}
+
+// ==========================================
+// 📺 Interstitial - פרסומת מסך מלא
+// ==========================================
+
+/**
+ * טעינת פרסומת מסך מלא (טען מראש!)
+ */
+export async function prepareInterstitial(): Promise<void> {
+  try {
+    const options: AdOptions = {
+      adId: AD_UNIT_IDS.interstitial,
+      isTesting: USE_TEST_ADS,
+    };
+    await AdMob.prepareInterstitial(options);
+    console.log('[AdMob] Interstitial prepared');
+  } catch (e) {
+    console.error('[AdMob] Prepare interstitial error:', e);
+  }
+}
+
+/**
+ * הצגת פרסומת מסך מלא
+ * קרא ל-prepareInterstitial() לפני!
+ */
+export async function showInterstitial(): Promise<void> {
+  try {
+    await AdMob.showInterstitial();
+    console.log('[AdMob] Interstitial shown');
+    // טען את הבא
+    await prepareInterstitial();
+  } catch (e) {
+    console.error('[AdMob] Show interstitial error:', e);
+  }
+}
+
+// ==========================================
+// 🎁 Rewarded - פרסומת עם פרס למשתמש
+// ==========================================
+
+/**
+ * טעינת פרסומת עם פרס (טען מראש!)
+ */
+export async function prepareRewarded(): Promise<void> {
+  try {
+    const options: RewardAdOptions = {
+      adId: AD_UNIT_IDS.rewarded,
+      isTesting: USE_TEST_ADS,
+    };
+    await AdMob.prepareRewardVideoAd(options);
+    console.log('[AdMob] Rewarded ad prepared');
+  } catch (e) {
+    console.error('[AdMob] Prepare rewarded error:', e);
+  }
+}
+
+/**
+ * הצגת פרסומת עם פרס
+ * @returns הפרס שהמשתמש קיבל, או null אם לא צפה
+ */
+export async function showRewarded(): Promise<AdMobRewardItem | null> {
+  return new Promise(async (resolve) => {
+    try {
+      // האזנה לפרס
+      const rewardListener = await AdMob.addListener(
+        RewardAdPluginEvents.Rewarded,
+        (reward: AdMobRewardItem) => {
+          console.log('[AdMob] User rewarded:', reward);
+          rewardListener.remove();
+          resolve(reward);
+        }
+      );
+
+      // האזנה לסגירה בלי פרס
+      const dismissListener = await AdMob.addListener(
+        RewardAdPluginEvents.Dismissed,
+        () => {
+          dismissListener.remove();
+          // טען את הבא
+          prepareRewarded();
+        }
+      );
+
+      await AdMob.showRewardVideoAd();
+    } catch (e) {
+      console.error('[AdMob] Show rewarded error:', e);
+      resolve(null);
+    }
+  });
+}
+
+// ==========================================
+// 🎯 Event Listeners
+// ==========================================
+
+/**
+ * האזנה לאירועי באנר
+ */
+export async function addBannerListeners(callbacks: {
+  onLoaded?: () => void;
+  onFailed?: (error: any) => void;
+  onClicked?: () => void;
+}) {
+  if (callbacks.onLoaded) {
+    await AdMob.addListener(BannerAdPluginEvents.Loaded, callbacks.onLoaded);
+  }
+  if (callbacks.onFailed) {
+    await AdMob.addListener(BannerAdPluginEvents.FailedToLoad, callbacks.onFailed);
+  }
+  if (callbacks.onClicked) {
+    await AdMob.addListener(BannerAdPluginEvents.AdClicked, callbacks.onClicked);
+  }
+}
+
+/**
+ * האזנה לאירועי Interstitial
+ */
+export async function addInterstitialListeners(callbacks: {
+  onLoaded?: () => void;
+  onFailed?: (error: any) => void;
+  onShowed?: () => void;
+  onDismissed?: () => void;
+}) {
+  if (callbacks.onLoaded) {
+    await AdMob.addListener(InterstitialAdPluginEvents.Loaded, callbacks.onLoaded);
+  }
+  if (callbacks.onFailed) {
+    await AdMob.addListener(InterstitialAdPluginEvents.FailedToLoad, callbacks.onFailed);
+  }
+  if (callbacks.onShowed) {
+    await AdMob.addListener(InterstitialAdPluginEvents.Showed, callbacks.onShowed);
+  }
+  if (callbacks.onDismissed) {
+    await AdMob.addListener(InterstitialAdPluginEvents.Dismissed, callbacks.onDismissed);
+  }
+}

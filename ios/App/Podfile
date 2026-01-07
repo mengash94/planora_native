@@ -11,7 +11,15 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorCommunityContacts', :path => '../../node_modules/@capacitor-community/contacts'
+  pod 'CapacitorCommunityInAppReview', :path => '../../node_modules/@capacitor-community/in-app-review'
+  pod 'CapacitorFirebaseAnalytics', :path => '../../node_modules/@capacitor-firebase/analytics'
+  pod 'CapacitorFirebaseCrashlytics', :path => '../../node_modules/@capacitor-firebase/crashlytics'
+  pod 'CapacitorFirebaseRemoteConfig', :path => '../../node_modules/@capacitor-firebase/remote-config'
   pod 'CapacitorApp', :path => '../../node_modules/@capacitor/app'
+  pod 'CapacitorBrowser', :path => '../../node_modules/@capacitor/browser'
+  pod 'CapacitorShare', :path => '../../node_modules/@capacitor/share'
+  pod 'CapacitorSplashScreen', :path => '../../node_modules/@capacitor/splash-screen'
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
   pod 'CapgoCapacitorSocialLogin', :path => '../../node_modules/@capgo/capacitor-social-login'
   pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'
@@ -24,6 +32,8 @@ target 'App' do
   # Firebase pods for Sign in with Apple authentication
   pod 'Firebase/Core'
   pod 'Firebase/Auth'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
 end
 
 post_install do |installer|

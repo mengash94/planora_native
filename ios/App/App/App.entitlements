@@ -6,7 +6,7 @@
     <string>production</string>
     <key>com.apple.developer.associated-domains</key>
     <array>
-        <string>applinks:www.plan-ora.net</string>
+        <string>applinks:register.plan-ora.net</string>
     </array>
     <key>com.apple.developer.applesignin</key>
     <array>
