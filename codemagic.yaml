@@ -46,11 +46,39 @@ workflows:
           echo "=== Available signing identities ==="
           security find-identity -v -p codesigning
           
+          echo "=== Applying profiles to Xcode project ==="
+          xcode-project use-profiles
+          
           echo "=== Installed provisioning profiles ==="
           ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "No profiles dir"
           
-          echo "=== Applying profiles to Xcode project ==="
-          xcode-project use-profiles
+          echo "=== Creating export options plist ==="
+          # Create export options plist using printf (avoids heredoc indentation issues)
+          printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' > ~/export_options.plist
+          printf '%s\n' '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ~/export_options.plist
+          printf '%s\n' '<plist version="1.0">' >> ~/export_options.plist
+          printf '%s\n' '<dict>' >> ~/export_options.plist
+          printf '%s\n' '  <key>method</key>' >> ~/export_options.plist
+          printf '%s\n' '  <string>app-store</string>' >> ~/export_options.plist
+          printf '%s\n' '  <key>teamID</key>' >> ~/export_options.plist
+          printf '%s\n' '  <string>462DHLZ9T8</string>' >> ~/export_options.plist
+          printf '%s\n' '  <key>uploadBitcode</key>' >> ~/export_options.plist
+          printf '%s\n' '  <false/>' >> ~/export_options.plist
+          printf '%s\n' '  <key>uploadSymbols</key>' >> ~/export_options.plist
+          printf '%s\n' '  <true/>' >> ~/export_options.plist
+          printf '%s\n' '  <key>compileBitcode</key>' >> ~/export_options.plist
+          printf '%s\n' '  <false/>' >> ~/export_options.plist
+          printf '%s\n' '  <key>signingStyle</key>' >> ~/export_options.plist
+          printf '%s\n' '  <string>manual</string>' >> ~/export_options.plist
+          printf '%s\n' '  <key>signingCertificate</key>' >> ~/export_options.plist
+          printf '%s\n' '  <string>Apple Distribution</string>' >> ~/export_options.plist
+          printf '%s\n' '</dict>' >> ~/export_options.plist
+          printf '%s\n' '</plist>' >> ~/export_options.plist
+          
+          echo "=== Export options plist contents ==="
+          cat ~/export_options.plist
+          echo "=== Validating plist ==="
+          plutil -lint ~/export_options.plist
 
       - name: Increment build number
         script: |
