@@ -42,11 +42,15 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       # Set Swift version to 5.0 for all pods
-      if config.build_settings['SWIFT_VERSION'].nil?
-        config.build_settings['SWIFT_VERSION'] = '5.0'
-      end
+      config.build_settings['SWIFT_VERSION'] = '5.0'
       # Disable warnings as errors for pods
       config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+      # Additional Swift compilation settings
+      config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-O'
+      config.build_settings['SWIFT_COMPILATION_MODE'] = 'wholemodule'
+      # Fix for Xcode 15+ compatibility
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
     end
   end
 end

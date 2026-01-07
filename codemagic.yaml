@@ -96,6 +96,9 @@ workflows:
           echo "=== Building signed IPA with full output ==="
           cd ios/App
           
+          # Show detailed error messages
+          set -o pipefail
+          
           # Archive with full output and show all warnings/errors
           xcodebuild \
             -workspace "$XCODE_WORKSPACE" \
@@ -108,7 +111,13 @@ workflows:
             DEVELOPMENT_TEAM=462DHLZ9T8 \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             SWIFT_VERSION=5.0 \
-            CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER=NO
+            CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER=NO \
+            OTHER_SWIFT_FLAGS="-Xfrontend -warn-long-function-bodies=100" \
+            2>&1 | tee /tmp/xcodebuild.log || {
+              echo "=== Build failed, showing CapacitorFirebaseAnalytics errors ==="
+              grep -A 20 "CapacitorFirebaseAnalytics" /tmp/xcodebuild.log || cat /tmp/xcodebuild.log | tail -100
+              exit 1
+            }
           
           echo "=== Exporting IPA ==="
           xcodebuild -exportArchive \
