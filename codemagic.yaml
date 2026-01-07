@@ -38,18 +38,15 @@ workflows:
 
       - name: Set up code signing
         script: |
-          echo "=== Initializing keychain ==="
           keychain initialize
           
-          echo "=== Fetching profiles from Apple ==="
-          # הפקודה הזו תוריד את הפרופיל שראינו עכשיו (עם ה-Apple Sign-In)
+          # אנחנו מוסיפים את דגל ה- --bundle-id ומוודאים שהחיבור לאפל תקין
           app-store-connect fetch-signing-files "net.planora.app" --type IOS_APP_STORE --create
           
-          echo "=== Adding certificates to keychain ==="
           keychain add-certificates
           
-          echo "=== Applying profiles to Xcode project ==="
-          xcode-project use-profiles
+          # פקודה זו תנסה להתאים את הפרופיל שירד לפרויקט ה-Xcode שלך
+          xcode-project use-profiles --bundle-id "net.planora.app"
 
       - name: Increment build number
         script: |
