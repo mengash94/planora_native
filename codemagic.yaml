@@ -15,7 +15,7 @@ workflows:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
         XCODE_SCHEME: "App"
-      xcode: 15.4
+      xcode: 16.1
 
     scripts:
       - name: Set up Node and install dependencies
@@ -108,6 +108,7 @@ workflows:
             DEVELOPMENT_TEAM=462DHLZ9T8 \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             SWIFT_VERSION=5.0 \
+            ENABLE_USER_SCRIPT_SANDBOX=NO \
             CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER=NO \
             2>&1 | tee /tmp/xcodebuild.log; then
             echo "=== Build failed ==="
