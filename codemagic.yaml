@@ -15,7 +15,7 @@ workflows:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
         XCODE_SCHEME: "App"
-      xcode: 16.0.0
+      xcode: 15.4
 
     scripts:
       - name: Set up Node and install dependencies
