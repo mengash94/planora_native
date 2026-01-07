@@ -26,16 +26,16 @@ const DEFAULT_VALUES: Record<string, string | number | boolean> = {
  */
 export async function initRemoteConfig(): Promise<void> {
   try {
-    // הגדרת ערכי ברירת מחדל
-    await FirebaseRemoteConfig.setDefaults({ defaults: DEFAULT_VALUES });
-    
     // הגדרת זמן מינימום בין עדכונים (בשניות)
+    // הערה: setMinimumFetchInterval deprecated, אבל עדיין זמין
     await FirebaseRemoteConfig.setMinimumFetchInterval({ minimumFetchIntervalInSeconds: 3600 }); // שעה
     
     // משיכת ערכים מהשרת
     await FirebaseRemoteConfig.fetchAndActivate();
     
     console.log('[RemoteConfig] Initialized successfully');
+    // הערה: ערכי ברירת מחדל מוגדרים ב-Firebase Console או דרך getString/getNumber/getBoolean
+    // אם הערך לא נמצא בשרת, נשתמש ב-DEFAULT_VALUES מקומית
   } catch (e) {
     console.warn('[RemoteConfig] Init error:', e);
   }

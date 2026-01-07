@@ -12,10 +12,11 @@ export async function logEvent(name: string, params?: Record<string, any>): Prom
 /**
  * רישום מסך נוכחי ל-Firebase Analytics
  * @param screenName - שם המסך
- * @param screenClass - שם המחלקה (אופציונלי)
+ * @param screenClass - שם המחלקה (אופציונלי, לא נתמך ב-Capacitor plugin)
  */
 export async function setCurrentScreen(screenName: string, screenClass?: string): Promise<void> {
-  await FirebaseAnalytics.setCurrentScreen({ screenName, screenClass });
+  // Capacitor Firebase Analytics plugin תומך רק ב-screenName
+  await FirebaseAnalytics.setCurrentScreen({ screenName });
 }
 
 /**
