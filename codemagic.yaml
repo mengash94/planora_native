@@ -15,6 +15,7 @@ workflows:
         NODE_VERSION: 18
         XCODE_WORKSPACE: "App.xcworkspace"
         XCODE_SCHEME: "App"
+        BUNDLE_ID: "net.planora.app"
       xcode: 16.1
 
     scripts:
@@ -40,45 +41,18 @@ workflows:
           echo "=== Initializing keychain ==="
           keychain initialize
           
+          echo "=== Fetching signing files from App Store Connect ==="
+          # הפקודה הזו תוריד את הפרופילים המעודכנים ביותר מאפל אוטומטית
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          
           echo "=== Adding certificates to keychain ==="
           keychain add-certificates
-          
-          echo "=== Available signing identities ==="
-          security find-identity -v -p codesigning
           
           echo "=== Applying profiles to Xcode project ==="
           xcode-project use-profiles
           
           echo "=== Installed provisioning profiles ==="
           ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "No profiles dir"
-          
-          echo "=== Creating export options plist ==="
-          # Create export options plist using printf (avoids heredoc indentation issues)
-          printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' > ~/export_options.plist
-          printf '%s\n' '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ~/export_options.plist
-          printf '%s\n' '<plist version="1.0">' >> ~/export_options.plist
-          printf '%s\n' '<dict>' >> ~/export_options.plist
-          printf '%s\n' '  <key>method</key>' >> ~/export_options.plist
-          printf '%s\n' '  <string>app-store</string>' >> ~/export_options.plist
-          printf '%s\n' '  <key>teamID</key>' >> ~/export_options.plist
-          printf '%s\n' '  <string>462DHLZ9T8</string>' >> ~/export_options.plist
-          printf '%s\n' '  <key>uploadBitcode</key>' >> ~/export_options.plist
-          printf '%s\n' '  <false/>' >> ~/export_options.plist
-          printf '%s\n' '  <key>uploadSymbols</key>' >> ~/export_options.plist
-          printf '%s\n' '  <true/>' >> ~/export_options.plist
-          printf '%s\n' '  <key>compileBitcode</key>' >> ~/export_options.plist
-          printf '%s\n' '  <false/>' >> ~/export_options.plist
-          printf '%s\n' '  <key>signingStyle</key>' >> ~/export_options.plist
-          printf '%s\n' '  <string>manual</string>' >> ~/export_options.plist
-          printf '%s\n' '  <key>signingCertificate</key>' >> ~/export_options.plist
-          printf '%s\n' '  <string>Apple Distribution</string>' >> ~/export_options.plist
-          printf '%s\n' '</dict>' >> ~/export_options.plist
-          printf '%s\n' '</plist>' >> ~/export_options.plist
-          
-          echo "=== Export options plist contents ==="
-          cat ~/export_options.plist
-          echo "=== Validating plist ==="
-          plutil -lint ~/export_options.plist
 
       - name: Increment build number
         script: |
@@ -93,11 +67,11 @@ workflows:
 
       - name: Build signed IPA
         script: |
-          echo "=== Building signed IPA with full output ==="
+          echo "=== Building signed IPA ==="
           cd ios/App
           
-          # Archive with detailed error output
-          if ! xcodebuild \
+          # בניית הארכיון
+          xcodebuild \
             -workspace "$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
@@ -106,24 +80,22 @@ workflows:
             archive \
             CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM=462DHLZ9T8 \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            SWIFT_VERSION=5.0 \
-            ENABLE_USER_SCRIPT_SANDBOX=NO \
-            CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER=NO \
-            2>&1 | tee /tmp/xcodebuild.log; then
-            echo "=== Build failed ==="
-            echo "=== Searching for CapacitorFirebaseAnalytics errors ==="
-            grep -i -A 50 "CapacitorFirebaseAnalytics" /tmp/xcodebuild.log | head -100 || echo "No CapacitorFirebaseAnalytics errors found in grep"
-            echo "=== Last 200 lines of build log ==="
-            tail -200 /tmp/xcodebuild.log
-            exit 1
-          fi
+            ENABLE_USER_SCRIPT_SANDBOX=NO
           
           echo "=== Exporting IPA ==="
-          xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
-            -exportPath $CM_BUILD_DIR/build/ios/ipa \
-            -exportOptionsPlist ~/export_options.plist
+          # יצירת ה-IPA - כאן Codemagic יבנה את ה-plist הנכון עבורך
+          if [ -f "$CM_BUILD_DIR/ios/App/App/ExportOptions.plist" ]; then
+            xcodebuild -exportArchive \
+              -archivePath $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
+              -exportPath $CM_BUILD_DIR/build/ios/ipa \
+              -exportOptionsPlist $CM_BUILD_DIR/ios/App/App/ExportOptions.plist
+          else
+            # Fallback: Use exportMethod directly
+            xcodebuild -exportArchive \
+              -archivePath $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
+              -exportPath $CM_BUILD_DIR/build/ios/ipa \
+              -exportMethod app-store
+          fi
           
           echo "=== IPA files ==="
           find $CM_BUILD_DIR -name "*.ipa" -ls
