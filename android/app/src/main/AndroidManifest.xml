@@ -17,13 +17,13 @@
 
         <!-- Telegram -->
         <package android:name="org.telegram.messenger" />
-        
+
         <!-- ✅ Waze - נדרש לפתיחת ניווט -->
         <package android:name="com.waze" />
-        
+
         <!-- ✅ Google Maps - נדרש לפתיחת מפות -->
         <package android:name="com.google.android.apps.maps" />
-        
+
         <!-- ✅ Google Calendar - נדרש לפתיחת יומן -->
         <package android:name="com.google.android.calendar" />
 
@@ -75,9 +75,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!-- Privacy Policy URL -->
-        <meta-data
-            android:name="privacy_policy_url"
-            android:value="https://plan-ora.net/privacy" />
+        <meta-data android:name="privacy_policy_url" android:value="https://plan-ora.net/privacy" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -98,7 +96,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="register.plan-ora.net" />
             </intent-filter>
-            
+
             <!-- ✅ App Links גם עבור plan-ora.net -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
