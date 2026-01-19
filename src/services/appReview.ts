@@ -117,9 +117,9 @@ export async function openStoreListing(): Promise<void> {
       url: 'https://play.google.com/store/apps/details?id=net.planora.app' 
     });
   } else if (platform === 'ios') {
-    // Apple App Store - החלף ב-App ID שלך
+    // Apple App Store - PlanOra
     await Browser.open({ 
-      url: 'https://apps.apple.com/app/idXXXXXXXXXX' 
+      url: 'https://apps.apple.com/app/id6755497184' 
     });
   }
 }
