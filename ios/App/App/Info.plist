@@ -82,5 +82,22 @@
 	<!-- Privacy Policy URL -->
 	<key>NSPrivacyPolicyURL</key>
 	<string>https://plan-ora.net/privacy</string>
+	
+	<!-- ✅ LSApplicationQueriesSchemes - נדרש לפתיחת אפליקציות חיצוניות -->
+	<!-- בלי זה, iOS חוסם את waze://, comgooglemaps://, maps:// וכו' -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>waze</string>
+		<string>comgooglemaps</string>
+		<string>googlemaps</string>
+		<string>maps</string>
+		<string>calshow</string>
+		<string>googlecalendar</string>
+		<string>whatsapp</string>
+		<string>tg</string>
+		<string>tel</string>
+		<string>sms</string>
+		<string>mailto</string>
+	</array>
 </dict>
 </plist>

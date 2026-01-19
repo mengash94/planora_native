@@ -17,6 +17,15 @@
 
         <!-- Telegram -->
         <package android:name="org.telegram.messenger" />
+        
+        <!-- ✅ Waze - נדרש לפתיחת ניווט -->
+        <package android:name="com.waze" />
+        
+        <!-- ✅ Google Maps - נדרש לפתיחת מפות -->
+        <package android:name="com.google.android.apps.maps" />
+        
+        <!-- ✅ Google Calendar - נדרש לפתיחת יומן -->
+        <package android:name="com.google.android.calendar" />
 
         <!-- דפדפנים - לפתיחת קישורים -->
         <intent>
