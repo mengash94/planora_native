@@ -76,6 +76,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:register.plan-ora.net</string>
+		<string>applinks:plan-ora.net</string>
 	</array>
 	<!-- סוף הגדרות Deep Link -->
 
