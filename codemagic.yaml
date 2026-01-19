@@ -67,7 +67,9 @@ workflows:
         script: |
           cd ios/App
           echo "=== Archiving App ==="
-          xcodebuild \
+          
+          # בניית Archive עם כל ההגדרות הנדרשות
+          if ! xcodebuild \
             -workspace "$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
@@ -78,13 +80,21 @@ workflows:
             DEVELOPMENT_TEAM=462DHLZ9T8 \
             PROVISIONING_PROFILE_SPECIFIER="plaoracodemagic" \
             ENABLE_USER_SCRIPT_SANDBOX=NO \
-            SWIFT_VERSION=5.0
-            
+            SWIFT_VERSION=5.0 \
+            CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER=NO \
+            GCC_TREAT_WARNINGS_AS_ERRORS=NO 2>&1 | tee /tmp/archive.log; then
+            echo "=== ARCHIVE FAILED - Last 100 lines: ==="
+            tail -100 /tmp/archive.log
+            exit 1
+          fi
+          
+          echo "=== Archive succeeded! ==="
+          ls -la $CM_BUILD_DIR/build/ios/xcarchive/
+          
           echo "=== Exporting IPA ==="
-          # תיקון תחביר סופי: שימוש ב- -- במקום -
+          # תיקון סינטקס: --archive במקום --archive-path
           xcode-project build-ipa \
-            --archive-path $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive \
-            --export-path $CM_BUILD_DIR/build/ios/ipa
+            --archive $CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive
           
           echo "=== IPA files ==="
           find $CM_BUILD_DIR -name "*.ipa" -ls
