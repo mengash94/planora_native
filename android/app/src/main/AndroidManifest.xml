@@ -9,11 +9,6 @@
     <!-- הרשאה לקריאת אנשי קשר -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <!-- 📍 Geolocation - מיקום לאירועים -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-
     <!-- 📶 Network - בדיקת חיבור לרשת -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 

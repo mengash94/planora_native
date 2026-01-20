@@ -45,10 +45,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>PlanOra uses your location to suggest nearby venues and event-related services.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>PlanOra uses your location to suggest nearby venues and provide navigation to event locations.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>PlanOra משתמשת באנשי הקשר שלך כדי להקל על הזמנת חברים לאירועים.</string>
 	<!-- ✅ שלב 3.1: הגדרות Deep Link עבור iOS -->
