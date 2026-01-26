@@ -47,6 +47,8 @@
 	<true/>
 	<key>NSContactsUsageDescription</key>
 	<string>PlanOra משתמשת באנשי הקשר שלך כדי להקל על הזמנת חברים לאירועים.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PlanOra משתמשת במיקום שלך כדי להציג מפות וניווט לאירועים. האפליקציה לא משתמשת במיקום ללא אישורך.</string>
 	<!-- ✅ שלב 3.1: הגדרות Deep Link עבור iOS -->
 	<key>CFBundleURLTypes</key>
 	<array>

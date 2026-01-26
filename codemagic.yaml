@@ -16,7 +16,7 @@ workflows:
         XCODE_WORKSPACE: "App.xcworkspace"
         XCODE_SCHEME: "App"
         BUNDLE_ID: "net.planora.app"
-      xcode: 16.1
+      xcode: 26.1
 
     scripts:
       - name: Set up Node and install dependencies
